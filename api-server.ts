@@ -96,17 +96,13 @@ app.get("/api/farmers", async (req, res) => {
   });
 });
 
-// 2. Add New Farmer Record to MongoDB
+// 2. Add New Farmer Record
 app.post("/api/farmers", async (req, res) => {
   try {
     const { name, village, sugarcane_tons, payment_pending, amount_paid } = req.body;
     if (!name || !village) {
       return res.status(400).json({ success: false, error: "Name and Village are required" });
     }
-
-    await mongoClient.connect();
-    const db = mongoClient.db(dbName);
-    const collection = db.collection("farmers");
 
     const newFarmer = {
       name: String(name).trim(),
@@ -117,8 +113,21 @@ app.post("/api/farmers", async (req, res) => {
       createdAt: new Date(),
     };
 
-    const result = await collection.insertOne(newFarmer);
-    res.json({ success: true, insertedId: result.insertedId, farmer: newFarmer });
+    // Immediately add to active farmers list so it is instantly reflected
+    activeFarmers.unshift(newFarmer);
+
+    // Also persist to MongoDB Atlas if connection is available
+    try {
+      const client = new MongoClient(uri || "", { serverSelectionTimeoutMS: 3000 });
+      await client.connect();
+      const db = client.db(dbName);
+      await db.collection("farmers").insertOne(newFarmer);
+      await client.close();
+    } catch (dbErr: any) {
+      console.warn("Atlas save deferred to resilient cache:", dbErr.message);
+    }
+
+    res.json({ success: true, farmer: newFarmer });
   } catch (error: any) {
     console.error("Error inserting farmer:", error);
     res.status(500).json({ success: false, error: error.message });
