@@ -1,0 +1,38 @@
+{
+  "name": "mcp",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "start": "tsx api-server.ts",
+    "dev": "concurrently -n \"API,FRONTEND\" -c \"cyan,green\" \"tsx api-server.ts\" \"vite\"",
+    "cli": "tsx client.ts",
+    "setup": "tsx setup-db.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.1",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.6.5",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^4.7.0",
+    "concurrently": "^9.2.5",
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.7",
+    "express": "^5.3.0",
+    "lucide-react": "^1.56.0",
+    "mongodb": "^6.21.0",
+    "openai": "^6.49.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vite": "^6.4.4",
+    "zod": "^4.6.7"
+  }
+}

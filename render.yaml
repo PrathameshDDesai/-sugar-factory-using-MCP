@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: sanjivani-mcp-portal
+    env: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: MONGODB_URI
+        sync: false
+      - key: DB_NAME
+        value: sanjivani_sugar
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: OPENAI_MODEL
+        value: gpt-4o-mini
+      - key: NODE_VERSION
+        value: 20.18.0
