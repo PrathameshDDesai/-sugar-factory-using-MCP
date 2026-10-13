@@ -7,11 +7,31 @@ import { MongoClient } from "mongodb";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import OpenAI from "openai";
+import helmet from "helmet";
+import rateLimit from "express-rate-limit";
 
 dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3001;
+
+// 1. Security Headers (configured for SPA & Google Fonts)
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+    crossOriginEmbedderPolicy: false,
+  })
+);
+
+// 2. API Rate Limiting: Max 120 requests per 15 minutes per IP
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 120,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, error: "Too many requests from this IP. Please try again after 15 minutes." },
+});
+app.use("/api/", apiLimiter);
 
 app.use(cors());
 app.use(express.json());
